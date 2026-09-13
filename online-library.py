@@ -26,7 +26,7 @@ cursor.execute("""
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS books(
     id INTEGER PRIMARY KEY AUTOINCREMENT, 
-    title TEXT UNIQUE NOT NULL,
+    title TEXT  NOT NULL,
     description TEXT,
     author_id INTEGER NOT NULL,
     genre_id  INTEGER NOT NULL,
