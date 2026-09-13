@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Library</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="library-container">
+
+        <div class="library-header">
+            <h1>My Library</h1>
+
+            <a href="/">
+                <button class="back-button">Back</button>
+            </a>
+        </div>
+
+
+        <section class="library-section">
+
+            <h2>❤️ Favorite Books</h2>
+
+            <div class="empty-library">
+                <p>You don't have any favorite books yet.</p>
+            </div>
+
+        </section>
+
+
+        {% if session.get("role") == "author" %}
+
+        <section class="library-section">
+
+            <div class="section-header">
+                <h2>✍️ My Published Books</h2>
+
+                <a href="/add_book">
+                    <button class="add-book-button">
+                        + Add Book
+                    </button>
+                </a>
+            </div>
+
+
+            {% if books %}
+
+                <div class="books-grid">
+
+                    {% for book in books %}
+
+                    <div class="book-card">
+
+                        <h3>{{ book["title"] }}</h3>
+
+                        <p class="book-description">
+                            {{ book["description"] }}
+                        </p>
+
+
+                        {% if book["status"] == "pending" %}
+
+                            <span class="book-status pending">
+                                🟡 Pending review
+                            </span>
+
+                        {% elif book["status"] == "approved" %}
+
+                            <span class="book-status approved">
+                                🟢 Published
+                            </span>
+
+                        {% elif book["status"] == "rejected" %}
+
+                            <span class="book-status rejected">
+                                🔴 Rejected
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-library">
+                    <p>You haven't added any books yet.</p>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+        {% endif %}
+
+    </div>
+
+</body>
+
+</html>

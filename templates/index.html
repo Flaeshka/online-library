@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Online Library</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- Верхня панель -->
+
+<div class="top-bar">
+
+    <h1>📚 Online Library</h1>
+
+
+    {% if session.get("username") %}
+
+        
+        <!-- Користувач залогінений -->
+
+        <div class="user-menu">
+            <div class = "my_library">
+                {% if session.get("role") == "author", "reader" %}
+
+                    <a href="/my_library">
+                        <button>My library</button>
+                 </a>
+
+                {% endif %}
+            </div>
+            <!-- Аватар користувача -->
+
+            <div class="user-avatar">
+                {{ session["username"][:2].upper() }}
+            </div>
+
+
+            <!-- Випадаюче меню -->
+
+            <div class="dropdown-menu">
+
+                <a href="/">
+                    👤 Profile
+                </a>
+
+                <a href="/logout">
+                    🚪 Log out
+                </a>
+
+            </div>
+
+        </div>
+
+
+    {% else %}
+
+        <!-- Користувач не залогінений -->
+
+        <div class="guest-buttons">
+
+            <a href="/login">
+                <button>Login</button>
+            </a>
+
+            <a href="/register">
+                <button>Register</button>
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+    
+    <!-- Головний блок -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h2>Welcome to Online Library</h2>
+
+            <p>
+                Discover your next favorite book.
+            </p>
+
+            {% if not session.get("username") %}
+
+                <div class="hero-buttons">
+
+                    <a href="/login">
+                        <button>Login</button>
+                    </a>
+
+                    <a href="/register">
+                        <button>Register</button>
+                    </a>
+
+                </div>
+
+            {% else %}
+
+                <p>
+                    Welcome back,
+                    <strong>{{ session["username"] }}</strong>!
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+    <!-- Книги -->
+
+    <section class="books-section">
+
+        <h2>Featured Books</h2>
+
+        <p class="books-description">
+            Explore some of the books available in our library.
+        </p>
+
+
+        <div class="books">
+
+            <!-- Книга 1 -->
+
+            <div class="book-card">
+
+                <div class="book-placeholder">
+                    📖
+                </div>
+
+                <h3>Book Title</h3>
+
+                <p>
+                    Book description will appear here.
+                </p>
+
+                <button>View Book</button>
+
+            </div>
+
+
+            <!-- Книга 2 -->
+
+            <div class="book-card">
+
+                <div class="book-placeholder">
+                    📖
+                </div>
+
+                <h3>Book Title</h3>
+
+                <p>
+                    Book description will appear here.
+                </p>
+
+                <button>View Book</button>
+
+            </div>
+
+
+            <!-- Книга 3 -->
+
+            <div class="book-card">
+
+                <div class="book-placeholder">
+                    📖
+                </div>
+
+                <h3>Book Title</h3>
+
+                <p>
+                    Book description will appear here.
+                </p>
+
+                <button>View Book</button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+</body>
+
+</html>

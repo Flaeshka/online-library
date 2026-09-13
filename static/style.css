@@ -1,0 +1,467 @@
+
+/* ============================= */
+/* Загальні налаштування          */
+/* ============================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+
+    font-family: Arial, sans-serif;
+
+    background-color: #f4f6f8;
+
+    color: #222;
+}
+
+
+/* ============================= */
+/* Верхня панель                  */
+/* ============================= */
+
+.top-bar {
+    width: 100%;
+
+    padding: 18px 50px;
+
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: white;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+
+    position: sticky;
+    top: 0;
+
+    z-index: 10;
+}
+
+.top-bar h1 {
+    margin: 0;
+
+    font-size: 26px;
+
+    color: #2c3e50;
+}
+
+
+/* ============================= */
+/* Кнопки верхньої панелі        */
+/* ============================= */
+
+.guest-buttons {
+    display: flex;
+
+    gap: 10px;
+}
+
+.guest-buttons button {
+    margin: 0;
+}
+
+
+/* ============================= */
+/* Аватар                        */
+/* ============================= */
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+
+    border-radius: 50%;
+
+    background-color: #3498db;
+
+    color: white;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+/* ============================= */
+/* Перехід у бібліотеку             */
+/* ============================= */
+.my_library {
+    width: 30px;
+    height: 30px;
+
+    background-color: #3498db;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+
+.user-menu{
+    align-items: center;
+    display: flex;
+    gap: 10px;
+}
+
+
+
+
+
+/* ============================= */
+/* Головний блок                 */
+/* ============================= */
+
+.hero {
+    min-height: 500px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    padding: 40px 20px;
+}
+
+.hero-content {
+    max-width: 700px;
+}
+
+.hero h2 {
+    margin: 0;
+
+    font-size: 48px;
+
+    color: #2c3e50;
+}
+
+.hero p {
+    margin-top: 20px;
+
+    font-size: 20px;
+
+    color: #666;
+}
+
+
+/* ============================= */
+/* Кнопки головного блоку        */
+/* ============================= */
+
+.hero-buttons {
+    margin-top: 35px;
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 15px;
+}
+
+.hero-buttons button {
+    margin: 0;
+
+    padding: 14px 30px;
+
+    font-size: 16px;
+}
+
+
+/* ============================= */
+/* Загальні кнопки               */
+/* ============================= */
+
+button {
+    border: none;
+
+    padding: 10px 18px;
+
+    border-radius: 8px;
+
+    background-color: #3498db;
+
+    color: white;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+button:hover {
+    background-color: #2980b9;
+
+    transform: translateY(-2px);
+}
+
+
+/* ============================= */
+/* Секція книг                   */
+/* ============================= */
+
+.books-section {
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    padding: 70px 20px 100px;
+
+    text-align: center;
+}
+
+.books-section h2 {
+    margin: 0;
+
+    font-size: 32px;
+
+    color: #2c3e50;
+}
+
+.books-description {
+    color: #777;
+
+    margin-top: 10px;
+
+    margin-bottom: 40px;
+}
+
+
+/* ============================= */
+/* Картки книг                   */
+/* ============================= */
+
+.books {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 25px;
+}
+
+.book-card {
+    background-color: white;
+
+    padding: 20px;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.08);
+
+    transition: 0.2s;
+}
+
+.book-card:hover {
+    transform: translateY(-7px);
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+
+/* ============================= */
+/* Місце для обкладинки          */
+/* ============================= */
+
+.book-placeholder {
+    height: 260px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 10px;
+
+    background-color: #eef2f5;
+
+    font-size: 60px;
+
+    margin-bottom: 20px;
+}
+
+
+/* ============================= */
+/* Інформація про книгу          */
+/* ============================= */
+
+.book-card h3 {
+    margin: 10px 0;
+
+    color: #2c3e50;
+
+    font-size: 20px;
+}
+
+.book-card p {
+    color: #666;
+
+    line-height: 1.5;
+
+    min-height: 45px;
+}
+
+.book-card button {
+    margin-top: 10px;
+}
+
+
+/* ============================= */
+/* Посилання                     */
+/* ============================= */
+
+a {
+    text-decoration: none;
+}
+
+
+/* ============================= */
+/* Адаптація для телефону        */
+/* ============================= */
+
+@media (max-width: 800px) {
+
+    .top-bar {
+        padding: 15px 20px;
+    }
+
+    .top-bar h1 {
+        font-size: 21px;
+    }
+
+    .hero h2 {
+        font-size: 36px;
+    }
+
+    .books {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+
+        align-items: center;
+    }
+
+}
+/* ============================= */
+/* моя бібліотека       */
+/* ============================= */
+.library-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.library-header h1 {
+    margin: 0;
+}
+
+.library-section {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.section-header h2 {
+    margin: 0;
+}
+
+.add-book-button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 20px;
+}
+
+.book-card {
+    padding: 20px;
+    border-radius: 12px;
+    background: #f8f9fa;
+    border: 1px solid #e5e5e5;
+}
+
+.book-card h3 {
+    margin-top: 0;
+}
+
+.book-description {
+    color: #666;
+    min-height: 45px;
+}
+
+.book-status {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.pending {
+    background: #fff3cd;
+}
+
+.approved {
+    background: #d4edda;
+}
+
+.rejected {
+    background: #f8d7da;
+}
+
+.empty-library {
+    padding: 25px;
+    text-align: center;
+    color: #777;
+}
+
+.back-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
