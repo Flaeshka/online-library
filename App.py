@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash, session
+from flask import Flask, render_template, request, redirect, flash, session, send_file
 import sqlite3
 import os
 from werkzeug.utils import secure_filename
@@ -60,19 +60,27 @@ def add_book():
     if session.get("role") != "author":
         return "only author can add books"
 
+    conn = get_db_connection()
+    
     if request.method == "POST":
 
         title = request.form["title"]
         description = request.form["description"]
-        genre_name = request.form["genre"]
+        # Отримуємо всі вибрані жанри
+        genre_ids = request.form.getlist("genres")
 
         book_file = request.files["book_file"]
 
         if book_file.filename == "":
             return "No file selected"
 
-        if not book_file.filename.lower().endswith(".pdf"):
-            return "Only PDF files  are allowed"
+        if not book_file.filename.lower().endswith((".pdf", ".fb2")):
+            conn.close()
+            return "Only PDF and FB2 files are allowed"
+
+        if not genre_ids:
+            conn.close()
+            return "Please select at least one genre"
 
         filename = secure_filename(book_file.filename)
 
@@ -82,29 +90,8 @@ def add_book():
         )
 
         book_file.save(file_path)
-        conn = get_db_connection()
-
-        genre = conn.execute(
-            "SELECT id FROM genres WHERE name = ?",
-            (genre_name,)
-        ).fetchone()
-
-        # peding
-
-        if genre is None:
-            conn.execute(
-                "INSERT INTO genres (name) VALUES (?)",
-                (genre_name,)
-            )
-
-            conn.commit()
-
-            genre = conn.execute(
-                "SELECT id FROM genres WHERE name = ?",
-                (genre_name,)
-            ).fetchone()
-
-        conn.execute("""
+        # Створюємо книгу
+        cursor = conn.execute("""
             INSERT INTO books
             (title, description, author_id, genre_id, file_path, status)
             VALUES (?, ?, ?, ?, ?, ?)
@@ -112,17 +99,45 @@ def add_book():
             title,
             description,
             session["user_id"],
-            genre["id"],
+            genre_ids[0],
             file_path,
             "pending"
         ))
+
+        book_id = cursor.lastrowid
+
+        # Додаємо жанри книги
+        for genre_id in genre_ids:
+
+            conn.execute("""
+                INSERT INTO book_genres
+                (book_id, genre_id)
+                VALUES (?, ?)
+            """, (
+                book_id,
+                genre_id
+            ))
 
         conn.commit()
         conn.close()
 
         print("BOOK ADDED:", title)
+
         return "book added successfully"
-    return render_template("add_book.html")
+
+    # Отримуємо жанри з БД
+    genres = conn.execute("""
+        SELECT *
+        FROM genres
+        ORDER BY name
+    """).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "add_book.html",
+        genres=genres
+    )
 
 
 
@@ -183,6 +198,9 @@ def login():
             session["role"] = user["role"]
 
 
+            if user["role"] == "librarian":
+                return redirect("/librarian")
+            
             return redirect ("/")
 
         return "Wrong email or password!"
@@ -190,9 +208,87 @@ def login():
     return render_template("login.html")
 
 
+@app.route("/librarian")
+def librarian():
 
+    if session.get("role") != "librarian":
+        return "Access denied"
 
+    return render_template("librarian.html")
 
+@app.route("/librarian/pending")
+def librarian_pending():
+
+    if session.get("role") != "librarian":
+        return "Access denied"
+
+    conn = get_db_connection()
+
+    books = conn.execute("""
+        SELECT books.*, users.username AS author_name
+        FROM books
+        JOIN users ON books.author_id = users.id
+        WHERE books.status = 'pending'
+        ORDER BY books.created_at ASC
+    """).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "librarian_pending.html",
+        books=books
+    )
+
+@app.route("/librarian/book/<int:book_id>")
+def librarian_book(book_id):
+
+    if session.get("role") != "librarian":
+        return "Access denied"
+
+    conn = get_db_connection()
+
+    book = conn.execute("""
+        SELECT books.*, users.username AS author_name
+        FROM books
+        JOIN users ON books.author_id = users.id
+        WHERE books.id = ?
+    """, (book_id,)).fetchone()
+
+    conn.close()
+
+    if book is None:
+        return "Book not found"
+
+    return render_template(
+        "librarian_book.html",
+        book=book
+    )
+
+@app.route("/librarian/book/file/<int:book_id>")
+def librarian_book_file(book_id):
+
+    if session.get("role") != "librarian":
+        return "Access denied"
+
+    conn = get_db_connection()
+
+    book = conn.execute("""
+        SELECT file_path
+        FROM books
+        WHERE id = ?
+    """, (book_id,)).fetchone()
+
+    conn.close()
+
+    if book is None:
+        return "Book not found"
+
+    file_path = book["file_path"]
+
+    if not file_path or not os.path.exists(file_path):
+        return "File not found"
+
+    return send_file(file_path)
 
 @app.route("/logout")
 def logout():

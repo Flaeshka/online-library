@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Books to Review</title>
+</head>
+
+<body>
+
+    <h1>📖 Books to Review</h1>
+
+    {% for book in books %}
+
+        <h2>{{ book["title"] }}</h2>
+
+        <p>Author: {{ book["author_name"] }}</p>
+        <a href="/librarian/book/{{ book['id'] }}">
+            <button>📖 Open book</button>
+        </a>
+    
+    {% endfor %}
+    <br></br>
+    <a href="/librarian">
+        <button>back</button>
+    </a>
+</body>
+
+</html>

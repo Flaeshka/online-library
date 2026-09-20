@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ book["title"] }}</title>
+</head>
+
+<body>
+
+    <h1>📖 {{ book["title"] }}</h1>
+
+    <p>
+        <strong>Author:</strong>
+        {{ book["author_name"] }}
+    </p>
+
+    <p>
+        <strong>Description:</strong>
+        {{ book["description"] }}
+    </p>
+
+    <br>
+
+    <a href="/librarian/book/file/{{ book['id'] }}" target="_blank">
+        <button>📖 Open book file</button>
+    </a>
+
+    <br><br>
+
+    <a href="/librarian/pending">
+        <button>← Back</button>
+    </a>
+
+</body>
+
+</html>

@@ -2,45 +2,233 @@
 <html>
 
 <head>
+
     <title>Add Book</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 
 <body>
 
-    <h1>Add a new book</h1>
+<div class="top-bar">
 
-    <form method="POST" enctype="multipart/form-data">
+    <h1>📚 Online Library</h1>
 
-        <label>Book title:</label>
-        <input type="text" name="title" required>
 
-        <br><br>
+    {% if session.get("username") %}
 
-        <label>Description:</label>
-        <textarea name="description" required></textarea>
+        
+        <!-- Користувач залогінений -->
 
-        <br><br>
+        <div class="user-menu">
+            <div class = "my_library">
+                {% if session.get("role") == "author", "reader" %}
 
-        <label>Genre:</label>
-        <input type="text" name="genre" required>
+                    <a href="/my_library">
+                        <button>My library</button>
+                 </a>
 
-        <br><br>
+                {% endif %}
+            </div>
+            <!-- Аватар користувача -->
 
-        <label>PDF file:</label>
-        <input type="file" name="book_file" accept=".pdf" required>
+            <div class="user-avatar">
+                {{ session["username"][:2].upper() }}
+            </div>
 
-        <br><br>
 
-        <button type="submit">Add Book</button>
+            <!-- Випадаюче меню -->
 
-    </form>
+            <div class="dropdown-menu">
 
+                <a href="/">
+                    👤 Profile
+                </a>
+
+                <a href="/logout">
+                    🚪 Log out
+                </a>
+
+            </div>
+
+        </div>
+
+
+    {% endif %}
+</div>
+
+    <div class = "add-book-container">
+
+        <h1>Add a new book</h1>
+
+        <form class="add-book-form" method="POST" enctype="multipart/form-data">
+
+            <label>Book title:</label>
+
+            <input type="text" name="title" required>
+
+            <br><br>
+
+
+            <label>Description:</label>
+
+            <textarea name="description" required></textarea>
+
+            <br><br>
+
+
+            <!-- Жанри -->
+
+            <div class="genre-selector">
+
+                <div class="genre-header">
+
+                    <label>Genres:</label>
+
+                    <button
+                        type="button"
+                        class="genre-button"
+                        onclick="toggleGenres()"
+                    >
+                        Select genres ▼
+                    </button>
+
+                </div>
+
+
+                <!-- Вікно з жанрами -->
+
+                <div id="genre-menu" class="genre-menu">
+
+                    {% for genre in genres %}
+
+                        <label class="genre-option">
+
+                            <input
+                                type="checkbox"
+                                name="genres"
+                                value="{{ genre['id'] }}"
+                                onchange="updateSelectedGenres()"
+                            >
+
+                            <span>{{ genre['name'] }}</span>
+
+                        </label>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- Вибрані жанри -->
+
+                <div id="selected-genres" class="selected-genres">
+
+                    No genres selected
+
+                </div>
+
+            </div>
+
+
+            <br><br>
+
+
+            <label>PDF file:</label>
+
+            <input
+                type="file"
+                name="book_file"
+                accept=".pdf,.fb2"
+                required
+            >
+
+            <br><br>
+
+
+            <button type="submit">
+                Add Book
+            </button>
+
+        </form>
+
+        <br>
+        <!-- Прибрана кнопка бек
+        
+        <a href="/my_library">
+        <button type="button">
+            Back
+        </button>
+        </a>-->
+
+    </div>
+    
     <br>
 
-    <a href="/my-library">
-        <button>Back</button>
-    </a>
+
+   
+
+    <script>
+
+        function toggleGenres() {
+
+            const menu = document.getElementById("genre-menu");
+
+            if (menu.style.display === "block") {
+
+                menu.style.display = "none";
+
+            } else {
+
+                menu.style.display = "block";
+
+            }
+
+        }
+
+
+        function updateSelectedGenres() {
+
+            const checkboxes = document.querySelectorAll(
+                'input[name="genres"]:checked'
+            );
+
+            const selectedGenres = [];
+
+
+            checkboxes.forEach(function(checkbox) {
+
+                const label = checkbox.parentElement;
+
+                selectedGenres.push(
+                    label.querySelector("span").textContent
+                );
+
+            });
+
+
+            const selectedContainer =
+                document.getElementById("selected-genres");
+
+
+            if (selectedGenres.length === 0) {
+
+                selectedContainer.textContent =
+                    "No genres selected";
+
+            } else {
+
+                selectedContainer.textContent =
+                    "Selected: " + selectedGenres.join(", ");
+
+            }
+
+        }
+
+    </script>
 
 </body>
 
 </html>
+

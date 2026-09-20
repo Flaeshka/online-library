@@ -8,6 +8,55 @@
 
 <body>
 
+<div class="top-bar">
+
+    <h1>📚 Online Library</h1>
+
+
+    {% if session.get("username") %}
+
+        
+        <!-- Користувач залогінений -->
+
+        <div class="user-menu">
+            <div class = "my_library">
+                {% if session.get("role") == "author", "reader" %}
+
+                    <a href="/my_library">
+                        <button>My library</button>
+                 </a>
+
+                {% endif %}
+            </div>
+            <!-- Аватар користувача -->
+
+            <div class="user-avatar">
+                {{ session["username"][:2].upper() }}
+            </div>
+
+
+            <!-- Випадаюче меню -->
+
+            <div class="dropdown-menu">
+
+                <a href="/">
+                    👤 Profile
+                </a>
+
+                <a href="/logout">
+                    🚪 Log out
+                </a>
+
+            </div>
+
+        </div>
+
+
+    {% endif %}
+</div>
+
+
+
     <div class="library-container">
 
         <div class="library-header">
@@ -65,6 +114,11 @@
                             <span class="book-status pending">
                                 🟡 Pending review
                             </span>
+                            
+                            <p class="book-date">
+                                Submitted:
+                                {{ book['created_at'] }}
+                            </p>
 
                         {% elif book["status"] == "approved" %}
 
@@ -72,11 +126,21 @@
                                 🟢 Published
                             </span>
 
+                            <p class="book-date">
+                                Approved:
+                                {{ book['approved_at'] }}
+                            </p>
+
+
                         {% elif book["status"] == "rejected" %}
 
                             <span class="book-status rejected">
                                 🔴 Rejected
                             </span>
+                            <p class="book-date">
+                                Rejected:
+                                {{ book['rejected_at'] }}
+                            </p>
 
                         {% endif %}
 
