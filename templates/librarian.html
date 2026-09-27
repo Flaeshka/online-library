@@ -1,49 +1,173 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <title>Librarian Panel</title>
+
+    <title>Library Administration</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 
 <body>
 
-    <div class="librarian-container">
+    <!-- Верхня панель -->
 
-        <h1>📚 Librarian Panel</h1>
+    <div class="top-bar">
 
-        <div class="librarian-menu">
+        <h1>📚 Library Administration</h1>
 
-            <a href="/librarian/pending">
-                <button>
-                    📖 Books to Review
-                </button>
+        <div class="admin-user">
+
+            <span>
+                👤 {{ session["username"] }}
+            </span>
+
+            <a href="/">
+                <button>Back to Library</button>
             </a>
 
-            <a href="/librarian/books">
-                <button>
-                    🗑 All Books
-                </button>
-            </a>
-
-            <a href="/librarian/complaints">
-                <button>
-                    ⚠ Complaints
-                </button>
+            <a href="/logout">
+                <button>Log out</button>
             </a>
 
         </div>
 
-        <a href="/logout">
-            <button>
-                🚪 Log out
-            </button>
-        </a>
-
     </div>
+
+
+    <!-- Основна частина -->
+
+    <main class="admin-container">
+
+        <div class="admin-header">
+
+            <h2>Administration Panel</h2>
+
+            <p>
+                Manage the Online Library
+            </p>
+
+        </div>
+
+
+        <!-- Функції адміністратора -->
+
+        <div class="admin-dashboard">
+
+
+            <!-- Перевірка книг -->
+
+            <div class="admin-card">
+
+                <div class="admin-card-icon">
+                    ⏳
+                </div>
+
+                <div class="admin-card-content">
+
+                    <h3>Pending Books</h3>
+
+                    <p>
+                        Review books submitted by authors.
+                    </p>
+
+                    <a href="/librarian/pending">
+                        <button>
+                            Review Books
+                        </button>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Опубліковані книги -->
+
+            <div class="admin-card">
+
+                <div class="admin-card-icon">
+                    📚
+                </div>
+
+                <div class="admin-card-content">
+
+                    <h3>Published Books</h3>
+
+                    <p>
+                        Manage books that are already approved.
+                    </p>
+
+                    <a href="/librarian/books">
+                        <button>
+                            Manage Books
+                        </button>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Жанри та теги -->
+
+            <div class="admin-card">
+
+                <div class="admin-card-icon">
+                    🏷️
+                </div>
+
+                <div class="admin-card-content">
+
+                    <h3>Genres & Tags</h3>
+
+                    <p>
+                        Manage genres and tags used by books.
+                    </p>
+
+                    <a href="/librarian/tags">
+                        <button>
+                            Manage Tags
+                        </button>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Скарги -->
+
+            <div class="admin-card">
+
+                <div class="admin-card-icon">
+                    💬
+                </div>
+
+                <div class="admin-card-content">
+
+                    <h3>Complaints</h3>
+
+                    <p>
+                        Review complaints about books and users.
+                    </p>
+
+                    <a href="/librarian/complaints">
+                        <button>
+                            View Complaints
+                        </button>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </main>
 
 </body>
 

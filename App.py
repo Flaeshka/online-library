@@ -21,13 +21,23 @@ def get_db_connection():
 
 @app.route("/")
 def home():
+
     conn = get_db_connection()
 
-    users = conn.execute("SELECT * FROM users").fetchall()
+    books = conn.execute("""
+        SELECT books.*, users.username AS author_name
+        FROM books
+        JOIN users ON books.author_id = users.id
+        WHERE books.status = 'approved'
+        ORDER BY books.approved_at DESC
+    """).fetchall()
 
     conn.close()
 
-    return render_template("index.html", users=users)
+    return render_template(
+        "index.html",
+        books=books
+    )
 
 
 @app.route("/my_library")
@@ -214,8 +224,31 @@ def librarian():
     if session.get("role") != "librarian":
         return "Access denied"
 
-    return render_template("librarian.html")
+    conn = get_db_connection()
 
+    # Всі схвалені книги
+    books = conn.execute("""
+        SELECT books.*, users.username AS author_name
+        FROM books
+        JOIN users ON books.author_id = users.id
+        WHERE books.status = 'approved'
+        ORDER BY books.approved_at DESC
+    """).fetchall()
+
+    # Кількість книг, які очікують перевірки
+    pending_count = conn.execute("""
+        SELECT COUNT(*)
+        FROM books
+        WHERE status = 'pending'
+    """).fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "librarian.html",
+        books=books,
+        pending_count=pending_count
+    )
 @app.route("/librarian/pending")
 def librarian_pending():
 
@@ -289,6 +322,73 @@ def librarian_book_file(book_id):
         return "File not found"
 
     return send_file(file_path)
+
+
+@app.route("/librarian/book/<int:book_id>/approve", methods=["POST"])
+def approve_book(book_id):
+
+    if session.get("role") != "librarian":
+        return "Access denied"
+
+    conn = get_db_connection()
+
+    conn.execute("""
+        UPDATE books
+        SET status = 'approved',
+            approved_at = CURRENT_TIMESTAMP,
+            rejected_at = NULL
+        WHERE id = ?
+    """, (book_id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/librarian/pending")
+
+
+@app.route("/librarian/book/<int:book_id>/reject", methods=["POST"])
+def reject_book(book_id):
+
+    if session.get("role") != "librarian":
+        return "Access denied"
+
+    conn = get_db_connection()
+
+    conn.execute("""
+        UPDATE books
+        SET status = 'rejected',
+            rejected_at = CURRENT_TIMESTAMP,
+            approved_at = NULL
+        WHERE id = ?
+    """, (book_id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/librarian/pending")
+
+@app.route("/librarian/books")
+def librarian_books():
+
+    if session.get("role") != "librarian":
+        return "Access denied"
+
+    conn = get_db_connection()
+
+    books = conn.execute("""
+        SELECT books.*, users.username AS author_name
+        FROM books
+        JOIN users ON books.author_id = users.id
+        WHERE books.status = 'approved'
+        ORDER BY books.approved_at DESC
+    """).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "librarian_books.html",
+        books=books
+    )
 
 @app.route("/logout")
 def logout():

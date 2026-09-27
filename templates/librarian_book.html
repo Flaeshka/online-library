@@ -27,6 +27,16 @@
 
     <br><br>
 
+    <form method="POST" action="/librarian/book/{{ book['id'] }}/approve" style="display: inline;">
+        <button type="submit">✅ Approve</button>
+    </form>
+
+    <form method="POST" action="/librarian/book/{{ book['id'] }}/reject" style="display: inline;">
+        <button type="submit">❌ Reject</button>
+    </form>
+
+    <br><br>
+
     <a href="/librarian/pending">
         <button>← Back</button>
     </a>

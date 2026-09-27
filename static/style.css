@@ -570,3 +570,199 @@ a {
     min-height: 140px;
     resize: vertical;
 }
+
+/* =========================
+   LIBRARIAN DASHBOARD
+   ========================= */
+
+.admin-container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 0 30px;
+}
+
+.admin-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.admin-header h2 {
+    margin-bottom: 10px;
+    font-size: 32px;
+    color: #2c3e50;
+}
+
+.admin-header p {
+    margin: 0;
+    color: #777;
+    font-size: 16px;
+}
+
+
+/* Librarian user */
+
+.admin-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-user span {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+
+/* Dashboard */
+
+.admin-dashboard {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+
+/* Cards */
+
+.admin-card {
+    background-color: white;
+
+    padding: 30px;
+
+    border-radius: 16px;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+
+    display: flex;
+    align-items: center;
+
+    gap: 25px;
+
+    transition: 0.2s;
+}
+
+.admin-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.12);
+}
+
+
+/* Icon */
+
+.admin-card-icon {
+    width: 70px;
+    height: 70px;
+
+    border-radius: 14px;
+
+    background-color: #ecf0f1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 32px;
+
+    flex-shrink: 0;
+}
+
+
+/* Card content */
+
+.admin-card-content {
+    flex: 1;
+}
+
+.admin-card-content h3 {
+    margin: 0 0 8px;
+
+    font-size: 22px;
+
+    color: #2c3e50;
+}
+
+.admin-card-content p {
+    margin: 0 0 18px;
+
+    color: #777;
+
+    line-height: 1.5;
+}
+
+/* =========================
+   LOGIN MODAL
+   ========================= */
+
+.login-modal {
+    display: none;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.55);
+
+    justify-content: center;
+    align-items: center;
+
+    z-index: 100;
+}
+
+
+.login-window {
+    width: 380px;
+
+    background-color: white;
+
+    padding: 35px;
+
+    border-radius: 16px;
+
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+
+    text-align: center;
+}
+
+
+.login-window h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+
+    font-size: 28px;
+
+    color: #2c3e50;
+}
+
+
+.login-window input {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    margin-bottom: 15px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 8px;
+
+    font-size: 15px;
+
+    box-sizing: border-box;
+}
+
+
+.login-window input:focus {
+    outline: none;
+
+    border-color: #3498db;
+}
+
+
+.login-window button {
+    width: 100%;
+
+    margin-top: 5px;
+}

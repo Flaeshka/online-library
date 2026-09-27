@@ -7,6 +7,8 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+          
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
 </head>
 
 <body>
@@ -24,14 +26,22 @@
         <!-- Користувач залогінений -->
 
         <div class="user-menu">
-            <div class = "my_library">
-                {% if session.get("role") == "author", "reader" %}
+            <div class="my_library">
+
+                {% if session.get("role") == "librarian" %}
+
+                    <a href="/librarian">
+                        <button>Administration</button>
+                    </a>
+
+                {% elif session.get("role") in ["author", "reader"] %}
 
                     <a href="/my_library">
                         <button>My library</button>
-                 </a>
+                    </a>
 
                 {% endif %}
+
             </div>
             <!-- Аватар користувача -->
 
@@ -63,9 +73,9 @@
 
         <div class="guest-buttons">
 
-            <a href="/login">
-                <button>Login</button>
-            </a>
+            
+            <button onclick="openLogin()">Login</button>
+            
 
             <a href="/register">
                 <button>Register</button>
@@ -94,9 +104,9 @@
 
                 <div class="hero-buttons">
 
-                    <a href="/login">
-                        <button>Login</button>
-                    </a>
+                    
+                    <button onclick="openLogin()">Login</button>
+                    
 
                     <a href="/register">
                         <button>Register</button>
@@ -120,37 +130,19 @@
 
     <!-- Книги -->
 
-    <section class="books-section">
+    <!-- Книги -->
 
-        <h2>Featured Books</h2>
+<section class="books-section">
 
-        <p class="books-description">
-            Explore some of the books available in our library.
-        </p>
+    <h2>Featured Books</h2>
 
+    <p class="books-description">
+        Explore some of the books available in our library.
+    </p>
 
-        <div class="books">
+    <div class="books">
 
-            <!-- Книга 1 -->
-
-            <div class="book-card">
-
-                <div class="book-placeholder">
-                    📖
-                </div>
-
-                <h3>Book Title</h3>
-
-                <p>
-                    Book description will appear here.
-                </p>
-
-                <button>View Book</button>
-
-            </div>
-
-
-            <!-- Книга 2 -->
+        {% for book in books %}
 
             <div class="book-card">
 
@@ -158,38 +150,70 @@
                     📖
                 </div>
 
-                <h3>Book Title</h3>
+                <h3>
+                    {{ book["title"] }}
+                </h3>
 
                 <p>
-                    Book description will appear here.
+                    {{ book["description"] }}
+                </p>
+
+                <p>
+                    <strong>Author:</strong>
+                    {{ book["author_name"] }}
                 </p>
 
                 <button>View Book</button>
 
             </div>
 
+        {% else %}
 
-            <!-- Книга 3 -->
+            <p>
+                No books available yet.
+            </p>
 
-            <div class="book-card">
+        {% endfor %}
 
-                <div class="book-placeholder">
-                    📖
-                </div>
+    </div>
 
-                <h3>Book Title</h3>
+</section>
+    
 
-                <p>
-                    Book description will appear here.
-                </p>
 
-                <button>View Book</button>
+    <div id="loginModal" class="login-modal">
 
-            </div>
+        <div class="login-window" onclick="event.stopPropagation()">
+
+            <h2>Login</h2>
+
+            <form method="POST" action="/login">
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    required
+                >
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    required
+                >
+
+                <button type="submit">
+                    Login
+                </button>
+
+            </form>
 
         </div>
 
-    </section>
+    </div>
+
+
 
 
 </body>
