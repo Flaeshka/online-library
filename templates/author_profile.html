@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Author Profile - Online Library</title>
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
+
+
+</head>
+
+<body>
+
+
+<div class="top-bar">
+
+    <h1>📚 Online Library</h1>
+
+    <a href="/my_library">
+        <button>← My Library</button>
+    </a>
+
+</div>
+
+
+<section class="profile-page">
+
+    <div class="profile-card">
+
+        <h2>Author Profile</h2>
+
+        <p>
+            Enter the name that readers will see.
+            You can use your real name or a pseudonym.
+        </p>
+
+        <form method="POST">
+
+            <label>
+                Author name
+            </label>
+
+            <input
+                type="text"
+                name="author_name"
+                value="{{ user['author_name'] or '' }}"
+                placeholder="Your name or pseudonym"
+                required
+            >
+
+            <button type="submit">
+                Save
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+</body>
+
+</html>

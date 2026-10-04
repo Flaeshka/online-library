@@ -12,6 +12,15 @@
 
     <h1>📚 Online Library</h1>
 
+    <h1>📚 My Library</h1>
+
+    {% if session.get("role") == "author" %}
+
+        <a href="/author/profile">
+            <button>✏️ Edit Author Profile</button>
+        </a>
+
+    {% endif %}
 
     {% if session.get("username") %}
 
@@ -20,7 +29,7 @@
 
         <div class="user-menu">
             <div class = "my_library">
-                {% if session.get("role") == "author", "reader" %}
+                {% if session.get("role") in ["author", "reader"] %}
 
                     <a href="/my_library">
                         <button>My library</button>

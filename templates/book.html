@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>{{ book["title"] }} - Online Library</title>
+
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
+
+
+</head>
+
+<body>
+
+<div class="top-bar">
+
+    <h1>📚 Online Library</h1>
+
+    <a href="/">
+        <button>← Back to Library</button>
+    </a>
+
+</div>
+
+
+<section class="book-page">
+
+    <div class="book-page-content">
+
+        <div class="book-page-placeholder">
+            📖
+        </div>
+
+        <div class="book-page-info">
+
+            <h2>{{ book["title"] }}</h2>
+
+            <p>
+                <strong>Author:</strong>
+                {{ book["author_name"] }}
+            </p>
+
+            <p>
+                <strong>Description:</strong>
+            </p>
+
+            <p>
+                {{ book["description"] }}
+            </p>
+
+            <br>
+
+            <a href="/book/file/{{ book['id'] }}" target="_blank">
+                <button>📖 Open Book</button>
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</body>
+
+</html>

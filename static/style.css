@@ -766,3 +766,70 @@ a {
 
     margin-top: 5px;
 }
+
+
+/* =========================
+   Author_page
+   ========================= */
+
+   /* Author profile */
+
+.profile-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 50px 20px;
+}
+
+.profile-card {
+    width: 500px;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile-card h2 {
+    margin-bottom: 15px;
+}
+
+.profile-card p {
+    margin-bottom: 25px;
+    color: #555;
+}
+
+.profile-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile-card input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.profile-card button {
+    margin-top: 10px;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+/* added book popup */
+.success-popup {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 25px;
+    background: #4caf50;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    cursor: pointer;
+}

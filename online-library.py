@@ -98,38 +98,38 @@ cursor.execute("""
 # переношу зі старої дб у нову без unique
 cursor.execute("PRAGMA foreign_keys = OFF")
 
-cursor.execute("""
-    CREATE TABLE books_new (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT NOT NULL,
-        description TEXT,
-        author_id INTEGER NOT NULL,
-        genre_id INTEGER NOT NULL,
-        file_path TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        status TEXT DEFAULT 'pending',
+#cursor.execute("""
+ #   CREATE TABLE books_new (
+  #      id INTEGER PRIMARY KEY AUTOINCREMENT,
+   #     title TEXT NOT NULL,
+    #    description TEXT,
+     #   author_id INTEGER NOT NULL,
+      #  genre_id INTEGER NOT NULL,
+       # file_path TEXT,
+        #created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        #status TEXT DEFAULT 'pending',
 
-        FOREIGN KEY (author_id) REFERENCES users(id),
-        FOREIGN KEY (genre_id) REFERENCES genres(id)
-    )
-""")
+        #FOREIGN KEY (author_id) REFERENCES users(id),
+        #FOREIGN KEY (genre_id) REFERENCES genres(id)
+    #)
+#""")
 
-cursor.execute("""
-    INSERT INTO books_new
-    (id, title, description, author_id, genre_id, file_path, created_at, status)
-    SELECT
-        id, title, description, author_id, genre_id, file_path, created_at, status
-    FROM books
-""")
+#cursor.execute("""
+ #   INSERT INTO books_new
+  #  (id, title, description, author_id, genre_id, file_path, created_at, status)
+   # SELECT
+   #     id, title, description, author_id, genre_id, file_path, created_at, status
+   # FROM books
+#""")
 
-cursor.execute("DROP TABLE books")
+#cursor.execute("DROP TABLE books")
 
-cursor.execute("""
-    ALTER TABLE books_new
-    RENAME TO books
-""")
+#cursor.execute("""
+ #   ALTER TABLE books_new
+ #   RENAME TO books
+#""")
 
-cursor.execute("PRAGMA foreign_keys = ON")
+#cursor.execute("PRAGMA foreign_keys = ON")
 
 #------------------------------------
 
@@ -164,13 +164,26 @@ cursor.executemany("""
     ('Literary Fiction',)
 ])
 
-cursor.execute("""
-    ALTER TABLE books ADD COLUMN approved_at DATETIME
-""")
+#cursor.execute("""
+ #   ALTER TABLE books ADD COLUMN approved_at DATETIME
+#""")
 
-cursor.execute("""
-    ALTER TABLE books ADD COLUMN rejected_at DATETIME
-""")
+#cursor.execute("""
+  #  ALTER TABLE books ADD COLUMN rejected_at DATETIME
+#""")
+
+#cursor.execute("""
+ #   ALTER TABLE books ADD COLUMN cover_path TEXT;
+#""")
+
+#cursor.execute("""
+    #ALTER TABLE books ADD COLUMN publication_date TEXT;
+#""")
+
+#cursor.execute("""
+    #ALTER TABLE users ADD COLUMN author_name TEXT;
+#""")
+
 
 con.commit()
 

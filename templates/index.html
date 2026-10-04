@@ -162,8 +162,10 @@
                     <strong>Author:</strong>
                     {{ book["author_name"] }}
                 </p>
-
-                <button>View Book</button>
+                <a href="/book/{{ book['id'] }}">
+                    <button>View Book</button>
+                </a>
+                
 
             </div>
 

@@ -63,6 +63,44 @@ def my_book():
 
     return render_template("my_library.html")
 
+@app.route("/author/profile", methods=["GET", "POST"])
+def author_profile():
+
+    if session.get("role") != "author":
+        return "Access denied"
+
+    conn = get_db_connection()
+
+    if request.method == "POST":
+
+        author_name = request.form["author_name"]
+
+        conn.execute("""
+            UPDATE users
+            SET author_name = ?
+            WHERE id = ?
+        """, (
+            author_name,
+            session["user_id"]
+        ))
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/my_library")
+
+    user = conn.execute("""
+        SELECT author_name
+        FROM users
+        WHERE id = ?
+    """, (session["user_id"],)).fetchone()
+
+    conn.close()
+
+    return render_template(
+        "author_profile.html",
+        user=user
+    )
 
 @app.route("/add_book", methods = ["GET", "POST"])
 def add_book():
@@ -76,6 +114,9 @@ def add_book():
 
         title = request.form["title"]
         description = request.form["description"]
+        publication_date = request.form.get("publication_date")
+
+        print("PUBLICATION DATE:", publication_date)
         # Отримуємо всі вибрані жанри
         genre_ids = request.form.getlist("genres")
 
@@ -100,18 +141,23 @@ def add_book():
         )
 
         book_file.save(file_path)
+
+        print("FILE PATH:", file_path)
+        print("FILE EXISTS:", os.path.exists(file_path))
+        
         # Створюємо книгу
         cursor = conn.execute("""
             INSERT INTO books
-            (title, description, author_id, genre_id, file_path, status)
-            VALUES (?, ?, ?, ?, ?, ?)
+            (title, description, author_id, genre_id, file_path, status, publication_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
             title,
             description,
             session["user_id"],
             genre_ids[0],
             file_path,
-            "pending"
+            "pending",
+            publication_date
         ))
 
         book_id = cursor.lastrowid
@@ -133,7 +179,8 @@ def add_book():
 
         print("BOOK ADDED:", title)
 
-        return "book added successfully"
+        flash("Book added successfully!")
+        return redirect("/add_book")
 
     # Отримуємо жанри з БД
     genres = conn.execute("""
@@ -149,7 +196,60 @@ def add_book():
         genres=genres
     )
 
+@app.route("/book/<int:book_id>")
+def book(book_id):
+    conn = get_db_connection()
 
+    book = conn.execute("""
+        SELECT books.*, users.username AS author_name
+        FROM books
+        JOIN users ON books.author_id = users.id
+        WHERE books.id = ? AND books.status = 'approved'
+    """, (book_id,)).fetchone()
+
+    conn.close()
+
+    if book is None:
+        return "Book not found"
+
+    return render_template("book.html", book=book)
+
+@app.route("/book/file/<int:book_id>")
+def book_file(book_id):
+
+    conn = get_db_connection()
+
+    book = conn.execute("""
+        SELECT file_path, title, status
+        FROM books
+        WHERE id = ?
+    """, (book_id,)).fetchone()
+
+    conn.close()
+
+    if book is None:
+        return "Book not found"
+
+    print("BOOK:", book["title"])
+    print("STATUS:", book["status"])
+    print("FILE PATH:", book["file_path"])
+    print("FILE EXISTS:", os.path.exists(book["file_path"]) if book["file_path"] else False)
+
+    if book["status"] != "approved":
+        return "Book is not approved"
+
+    file_path = book["file_path"]
+
+    if not file_path:
+        return "File path is empty"
+
+    if not os.path.exists(file_path):
+        return "File not found"
+
+    return send_file(
+        file_path,
+        as_attachment=False
+    )
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
