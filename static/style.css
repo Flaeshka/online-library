@@ -833,3 +833,388 @@ a {
     z-index: 1000;
     cursor: pointer;
 }
+
+
+.pending-page {
+    padding: 30px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.pending-description {
+    color: #777;
+    margin-bottom: 25px;
+}
+
+.pending-table-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.pending-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.pending-table th,
+.pending-table td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5;
+    vertical-align: middle;
+}
+
+.pending-table th {
+    background: #f3f4f6;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.pending-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.pending-book-title {
+    font-weight: 600;
+    min-width: 140px;
+}
+
+.pending-table td a {
+    overflow-wrap: anywhere;
+}
+
+.pending-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-width: 220px;
+}
+
+.pending-actions form {
+    margin: 0;
+}
+
+.pending-action-btn {
+    display: inline-block;
+    padding: 8px 11px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 13px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.view-btn {
+    background: #3978c5;
+}
+
+.approve-btn {
+    background: #2e8b57;
+}
+
+.reject-btn {
+    background: #c74343;
+}
+
+.pending-action-btn:hover {
+    opacity: 0.85;
+}
+
+.empty-pending {
+    text-align: center !important;
+    padding: 35px !important;
+    color: #777;
+}
+
+.pending-total {
+    margin-top: 18px;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .pending-page {
+        padding: 15px;
+    }
+}
+
+
+.pending-search {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0 12px;
+}
+
+.pending-search input {
+    flex: 1;
+    min-width: 220px;
+    max-width: 450px;
+    padding: 11px 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.pending-search button {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 6px;
+    background: #3978c5;
+    color: white;
+    cursor: pointer;
+}
+
+.clear-search {
+    color: #3978c5;
+    text-decoration: none;
+}
+
+.pending-search-results {
+    margin: 10px 0 18px;
+    color: #777;
+    font-size: 14px;
+}
+
+
+/* Компактний пошук у Pending Books */
+
+.pending-page .pending-search {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pending-page .pending-search input[type="search"] {
+    flex: 0 1 280px;
+    width: 280px;
+    min-width: 180px;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+/* Кнопка вибору колонок */
+
+.pending-page .pending-search-fields {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.pending-page .pending-search-fields summary {
+    display: block;
+    padding: 9px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* Список колонок */
+
+.pending-page .pending-fields-menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    z-index: 100;
+    min-width: 190px;
+    padding: 8px 12px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Кожен прапорець і його назва */
+
+.pending-page .pending-fields-menu label {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    width: 100%;
+    margin: 0;
+    padding: 7px 0;
+    box-sizing: border-box;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.pending-page .pending-fields-menu input[type="checkbox"] {
+    display: inline-block;
+    flex: 0 0 16px;
+    width: 16px;
+    min-width: 16px;
+    height: 16px;
+    margin: 0;
+    padding: 0;
+}
+
+/* Кнопки пошуку */
+
+.pending-page .pending-search button {
+    margin: 0;
+    padding: 9px 14px;
+    white-space: nowrap;
+}
+
+.pending-page .pending-search .clear-search {
+    white-space: nowrap;
+}
+
+
+
+/* Compact action buttons in Published Books */
+
+.table-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.table-actions form {
+    margin: 0;
+    padding: 0;
+}
+
+.table-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 9px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s ease;
+}
+
+.action-open {
+    color: #444;
+    background: #f3f4f6;
+    border-color: #e1e3e6;
+}
+
+.action-open:hover {
+    background: #e7e9ec;
+}
+
+.action-edit {
+    color: #2457a7;
+    background: #edf3fc;
+    border-color: #d7e4f8;
+}
+
+.action-edit:hover {
+    background: #dce9fa;
+}
+
+.action-delete {
+    color: #b42318;
+    background: #fff0ef;
+    border-color: #f5d0cd;
+}
+
+.action-delete:hover {
+    background: #ffe1de;
+}
+
+
+
+/* Edit book page */
+
+.edit-book-form {
+    max-width: 650px;
+    margin: 24px auto;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.edit-book-form h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.edit-book-form p {
+    color: #666;
+    line-height: 1.5;
+}
+
+.edit-genres-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.edit-genre-option {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.edit-genre-option:hover {
+    background: #f7f9fc;
+}
+
+.edit-genre-option input {
+    margin: 0;
+    cursor: pointer;
+}
+
+.edit-book-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.save-button,
+.cancel-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.save-button {
+    color: white;
+    background: #315f9e;
+    border: 1px solid #315f9e;
+}
+
+.save-button:hover {
+    background: #264d82;
+}
+
+.cancel-button {
+    color: #444;
+    background: #f3f4f6;
+    border: 1px solid #e1e3e6;
+}
+
+.cancel-button:hover {
+    background: #e7e9ec;
+}

@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Book</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="top-bar">
+
+        <h1>📚 Edit Book</h1>
+
+        <div class="admin-user">
+
+            <span>👤 {{ session["username"] }}</span>
+
+            <a href="/librarian/books">
+                <button type="button">Published Books</button>
+            </a>
+
+            <a href="/logout">
+                <button type="button">Log out</button>
+            </a>
+
+        </div>
+
+    </div>
+
+    <main class="admin-container">
+
+        <div class="admin-header">
+
+            <h2>{{ book["title"] }}</h2>
+
+            <p>
+                Select the genres that belong to this book.
+            </p>
+
+        </div>
+
+        <form method="POST" class="edit-book-form">
+
+            <h3>Book genres</h3>
+
+            <p>
+                Check the genres you want to keep or add.
+                Uncheck the genres you want to remove.
+            </p>
+
+            <div class="edit-genres-list">
+
+                {% for genre in genres %}
+
+                    <label class="edit-genre-option">
+
+                        <input
+                            type="checkbox"
+                            name="genres"
+                            value="{{ genre['id'] }}"
+                            {% if genre['id'] in selected_genre_ids %}checked{% endif %}
+                        >
+
+                        <span>{{ genre["name"] }}</span>
+
+                    </label>
+
+                {% else %}
+
+                    <p>No genres are available.</p>
+
+                {% endfor %}
+
+            </div>
+
+            <div class="edit-book-actions">
+
+                <button type="submit" class="save-button">
+                    Save Changes
+                </button>
+
+                <a href="/librarian/books" class="cancel-button">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </main>
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash, session, send_file
+from flask import Flask, render_template, request, redirect, flash, session, send_file, jsonify
 import sqlite3
 import os
 from werkzeug.utils import secure_filename
@@ -349,28 +349,92 @@ def librarian():
         books=books,
         pending_count=pending_count
     )
+
+
+
 @app.route("/librarian/pending")
 def librarian_pending():
 
     if session.get("role") != "librarian":
         return "Access denied"
 
+    search_query = request.args.get("q", "").strip()
+
+    # Дозволені поля пошуку
+    available_fields = {
+        "title": "books.title",
+        "author": """
+            COALESCE(
+                NULLIF(users.author_name, ''),
+                users.username
+            )
+        """,
+        "email": "users.email"
+    }
+
+    # Отримуємо вибрані поля з форми
+    selected_fields = request.args.getlist("fields")
+
+    # Відкидаємо невідомі значення
+    selected_fields = [
+        field for field in selected_fields
+        if field in available_fields
+    ]
+
+    # Якщо нічого не вибрано, шукаємо за всіма полями
+    if not selected_fields:
+        selected_fields = list(available_fields.keys())
+
     conn = get_db_connection()
 
-    books = conn.execute("""
-        SELECT books.*, users.username AS author_name
+    sql = """
+        SELECT
+            books.*,
+            COALESCE(
+                NULLIF(users.author_name, ''),
+                users.username
+            ) AS author_name,
+            users.email AS author_email,
+            GROUP_CONCAT(DISTINCT genres.name) AS genres
         FROM books
         JOIN users ON books.author_id = users.id
+        LEFT JOIN book_genres ON books.id = book_genres.book_id
+        LEFT JOIN genres ON book_genres.genre_id = genres.id
         WHERE books.status = 'pending'
+    """
+
+    params = []
+
+    # Додаємо умови пошуку, якщо введено текст
+    if search_query:
+        conditions = []
+
+        for field in selected_fields:
+            conditions.append(
+                f"{available_fields[field]} LIKE ?"
+            )
+            params.append(f"%{search_query}%")
+
+        sql += " AND (" + " OR ".join(conditions) + ")"
+
+    sql += """
+        GROUP BY books.id
         ORDER BY books.created_at ASC
-    """).fetchall()
+    """
+
+    books = conn.execute(sql, params).fetchall()
 
     conn.close()
 
     return render_template(
         "librarian_pending.html",
-        books=books
+        books=books,
+        search_query=search_query,
+        search_fields=selected_fields
     )
+
+
+
 
 @app.route("/librarian/book/<int:book_id>")
 def librarian_book(book_id):
@@ -467,28 +531,317 @@ def reject_book(book_id):
 
     return redirect("/librarian/pending")
 
-@app.route("/librarian/books")
-def librarian_books():
+
+
+@app.route("/librarian/book/<int:book_id>/edit", methods=["GET", "POST"])
+def librarian_edit_book(book_id):
 
     if session.get("role") != "librarian":
         return "Access denied"
 
     conn = get_db_connection()
 
-    books = conn.execute("""
-        SELECT books.*, users.username AS author_name
+    # Отримуємо книгу
+    book = conn.execute("""
+        SELECT *
+        FROM books
+        WHERE id = ? AND status = 'approved'
+    """, (book_id,)).fetchone()
+
+    if book is None:
+        conn.close()
+        return "Book not found", 404
+
+    # Отримуємо всі доступні жанри
+    genres = conn.execute("""
+        SELECT *
+        FROM genres
+        ORDER BY name
+    """).fetchall()
+
+    if request.method == "POST":
+
+        selected_genres = request.form.getlist("genres")
+
+        # Перевіряємо, що передані ID існують у таблиці genres
+        valid_genre_ids = {
+            str(genre["id"]) for genre in genres
+        }
+
+        if not set(selected_genres).issubset(valid_genre_ids):
+            conn.close()
+            return "Invalid genre selection", 400
+
+        # Видаляємо старі зв'язки книги з жанрами
+        conn.execute("""
+            DELETE FROM book_genres
+            WHERE book_id = ?
+        """, (book_id,))
+
+        # Додаємо вибрані жанри
+        for genre_id in selected_genres:
+            conn.execute("""
+                INSERT INTO book_genres (book_id, genre_id)
+                VALUES (?, ?)
+            """, (book_id, int(genre_id)))
+
+        conn.commit()
+        conn.close()
+
+        flash("Book genres updated successfully!", "success")
+
+        return redirect("/librarian/books")
+
+    # Отримуємо жанри, які вже належать книзі
+    selected_genres = conn.execute("""
+        SELECT genre_id
+        FROM book_genres
+        WHERE book_id = ?
+    """, (book_id,)).fetchall()
+
+    selected_genre_ids = {
+        genre["genre_id"] for genre in selected_genres
+    }
+
+    conn.close()
+
+    return render_template(
+        "librarian_book_edit.html",
+        book=book,
+        genres=genres,
+        selected_genre_ids=selected_genre_ids
+    )
+
+
+
+
+@app.route("/librarian/books")
+def librarian_books():
+
+    if session.get("role") != "librarian":
+        return "Access denied"
+
+    search_query = request.args.get("q", "").strip()
+
+    available_fields = {
+        "title": "books.title",
+        "author": """
+            COALESCE(
+                NULLIF(users.author_name, ''),
+                users.username
+            )
+        """,
+        "email": "users.email"
+    }
+
+    selected_fields = request.args.getlist("fields")
+    selected_fields = [
+        field for field in selected_fields
+        if field in available_fields
+    ]
+
+    if not selected_fields:
+        selected_fields = list(available_fields.keys())
+
+    conn = get_db_connection()
+
+    sql = """
+        SELECT
+            books.*,
+            COALESCE(
+                NULLIF(users.author_name, ''),
+                users.username
+            ) AS author_name,
+            users.email AS author_email,
+            GROUP_CONCAT(DISTINCT genres.name) AS genres
         FROM books
         JOIN users ON books.author_id = users.id
+        LEFT JOIN book_genres ON books.id = book_genres.book_id
+        LEFT JOIN genres ON book_genres.genre_id = genres.id
         WHERE books.status = 'approved'
+    """
+
+    params = []
+
+    if search_query:
+        conditions = []
+
+        for field in selected_fields:
+            conditions.append(
+                f"{available_fields[field]} LIKE ?"
+            )
+            params.append(f"%{search_query}%")
+
+        sql += " AND (" + " OR ".join(conditions) + ")"
+
+    sql += """
+        GROUP BY books.id
         ORDER BY books.approved_at DESC
-    """).fetchall()
+    """
+
+    books = conn.execute(sql, params).fetchall()
 
     conn.close()
 
     return render_template(
         "librarian_books.html",
-        books=books
+        books=books,
+        search_query=search_query,
+        search_fields=selected_fields
     )
+
+
+
+
+@app.route("/api/librarian/books")
+def api_librarian_books():
+
+    if session.get("role") != "librarian":
+        return jsonify({
+            "success": False,
+            "error": "Access denied"
+        }), 403
+
+    search = request.args.get("search", "").strip()
+    genre_id = request.args.get("genre_id", "")
+    author_id = request.args.get("author_id", "")
+    date_from = request.args.get("date_from", "")
+    date_to = request.args.get("date_to", "")
+    status = request.args.get("status", "approved")
+
+    conn = get_db_connection()
+
+    query = """
+        SELECT
+            books.id,
+            books.title,
+            COALESCE(
+                NULLIF(users.author_name, ''),
+                users.username
+            ) AS author_name,
+            books.publication_date,
+            books.created_at,
+            books.status,
+            GROUP_CONCAT(DISTINCT genres.name) AS genres
+        FROM books
+        JOIN users ON books.author_id = users.id
+        LEFT JOIN book_genres ON books.id = book_genres.book_id
+        LEFT JOIN genres ON book_genres.genre_id = genres.id
+        WHERE 1 = 1
+    """
+
+    params = []
+
+    if search:
+        query += """
+            AND (
+                books.title LIKE ?
+                OR users.username LIKE ?
+                OR users.author_name LIKE ?
+            )
+        """
+        search_value = f"%{search}%"
+        params.extend([
+            search_value,
+            search_value,
+            search_value
+        ])
+
+    if genre_id.isdigit():
+        query += """
+            AND (
+                EXISTS (
+                    SELECT 1
+                    FROM book_genres bg
+                    WHERE bg.book_id = books.id
+                      AND bg.genre_id = ?
+                )
+                OR (
+                    NOT EXISTS (
+                        SELECT 1
+                        FROM book_genres bg2
+                        WHERE bg2.book_id = books.id
+                    )
+                    AND books.genre_id = ?
+                )
+            )
+        """
+        params.extend([int(genre_id), int(genre_id)])
+
+    if author_id.isdigit():
+        query += " AND books.author_id = ?"
+        params.append(int(author_id))
+
+    if date_from:
+        query += " AND books.publication_date >= ?"
+        params.append(date_from)
+
+    if date_to:
+        query += " AND books.publication_date <= ?"
+        params.append(date_to)
+
+    if status in ["pending", "approved", "rejected"]:
+        query += " AND books.status = ?"
+        params.append(status)
+    elif status != "all":
+        conn.close()
+        return jsonify({
+            "success": False,
+            "error": "Invalid status"
+        }), 400
+
+    query += """
+        GROUP BY books.id
+        ORDER BY books.created_at DESC
+    """
+
+    books = conn.execute(query, params).fetchall()
+
+    genres = conn.execute("""
+        SELECT id, name
+        FROM genres
+        ORDER BY name
+    """).fetchall()
+
+    authors = conn.execute("""
+        SELECT DISTINCT
+            users.id,
+            COALESCE(
+                NULLIF(users.author_name, ''),
+                users.username
+            ) AS name
+        FROM users
+        JOIN books ON books.author_id = users.id
+        ORDER BY name
+    """).fetchall()
+
+    conn.close()
+
+    return jsonify({
+        "success": True,
+        "total": len(books),
+        "filters": {
+            "search": search,
+            "genre_id": genre_id,
+            "author_id": author_id,
+            "date_from": date_from,
+            "date_to": date_to,
+            "status": status
+        },
+        "available_filters": {
+            "genres": [dict(row) for row in genres],
+            "authors": [dict(row) for row in authors],
+            "statuses": [
+                {"value": "all", "label": "Усі статуси"},
+                {"value": "pending", "label": "Очікує перевірки"},
+                {"value": "approved", "label": "Схвалена"},
+                {"value": "rejected", "label": "Відхилена"}
+            ]
+        },
+        "books": [dict(row) for row in books]
+    })
+
+
 
 @app.route("/logout")
 def logout():

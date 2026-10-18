@@ -1,28 +1,243 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 
 <head>
-    <title>Books to Review</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pending Books - Online Library</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-    <h1>📖 Books to Review</h1>
+    <!-- Верхня панель -->
 
-    {% for book in books %}
+    <div class="top-bar">
+        <h1>📚 Online Library</h1>
 
-        <h2>{{ book["title"] }}</h2>
-
-        <p>Author: {{ book["author_name"] }}</p>
-        <a href="/librarian/book/{{ book['id'] }}">
-            <button>📖 Open book</button>
+        <a href="/librarian">
+            <button type="button">← Back to Dashboard</button>
         </a>
-    
-    {% endfor %}
-    <br></br>
-    <a href="/librarian">
-        <button>back</button>
-    </a>
-</body>
+    </div>
 
+
+    <!-- Основна частина -->
+
+    <main class="pending-page">
+
+        <h2>Books Pending Review</h2>
+
+        <p class="pending-description">
+            Перегляд, перевірка та модерація книг, надісланих авторами.
+        </p>
+
+
+        <!-- Пошук книг і вибір колонок -->
+
+        <form class="pending-search"
+              action="/librarian/pending"
+              method="GET">
+
+            <input
+                type="search"
+                name="q"
+                placeholder="Enter search text..."
+                value="{{ search_query }}"
+                aria-label="Search books"
+            >
+
+            <details class="pending-search-fields">
+
+                <summary>Search in ▾</summary>
+
+                <div class="pending-fields-menu">
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            name="fields"
+                            value="title"
+                            {% if 'title' in search_fields %}checked{% endif %}
+                        >
+                        Book title
+                    </label>
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            name="fields"
+                            value="author"
+                            {% if 'author' in search_fields %}checked{% endif %}
+                        >
+                        Author
+                    </label>
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            name="fields"
+                            value="email"
+                            {% if 'email' in search_fields %}checked{% endif %}
+                        >
+                        Author email
+                    </label>
+
+                </div>
+
+            </details>
+
+            <button type="submit">
+                Search
+            </button>
+
+            {% if search_query %}
+                <a href="/librarian/pending"
+                   class="clear-search">
+                    Clear
+                </a>
+            {% endif %}
+
+        </form>
+
+
+        <!-- Кількість результатів -->
+
+        <p class="pending-search-results">
+
+            {% if search_query %}
+                Results for "{{ search_query }}".
+            {% endif %}
+
+            Found books: {{ books|length }}
+
+        </p>
+
+
+        <!-- Таблиця книг -->
+
+        <div class="pending-table-container">
+
+            <table class="pending-table">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Email</th>
+                        <th>Genres</th>
+                        <th>Publication Date</th>
+                        <th>Submitted At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for book in books %}
+
+                    <tr>
+                        <td>{{ book["id"] }}</td>
+
+                        <td class="pending-book-title">
+                            {{ book["title"] }}
+                        </td>
+
+                        <td>
+                            {{ book["author_name"] }}
+                        </td>
+
+                        <td>
+                            <a href="mailto:{{ book['author_email'] }}">
+                                {{ book["author_email"] }}
+                            </a>
+                        </td>
+
+                        <td>
+                            {{ book["genres"] or "Not specified" }}
+                        </td>
+
+                        <td>
+                            {{ book["publication_date"] or "Not specified" }}
+                        </td>
+
+                        <td>
+                            {{ book["created_at"] or "Unknown" }}
+                        </td>
+
+                        <td>
+                            <div class="pending-actions">
+
+                                <a
+                                    href="/librarian/book/{{ book['id'] }}"
+                                    class="pending-action-btn view-btn">
+                                    View
+                                </a>
+
+                                <form
+                                    action="/librarian/book/{{ book['id'] }}/approve"
+                                    method="POST"
+                                    onsubmit="return confirm('Approve this book?');">
+
+                                    <button
+                                        type="submit"
+                                        class="pending-action-btn approve-btn">
+                                        Approve
+                                    </button>
+
+                                </form>
+
+                                <form
+                                    action="/librarian/book/{{ book['id'] }}/reject"
+                                    method="POST"
+                                    onsubmit="return confirm('Reject this book?');">
+
+                                    <button
+                                        type="submit"
+                                        class="pending-action-btn reject-btn">
+                                        Reject
+                                    </button>
+
+                                </form>
+
+                            </div>
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="8" class="empty-pending">
+
+                            {% if search_query %}
+                                За запитом "{{ search_query }}" книг не знайдено.
+                            {% else %}
+                                Наразі немає книг, які очікують перевірки.
+                            {% endif %}
+
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- Загальна кількість результатів -->
+
+        <p class="pending-total">
+            Кількість книг у результатах: {{ books|length }}
+        </p>
+
+    </main>
+
+</body>
 </html>
